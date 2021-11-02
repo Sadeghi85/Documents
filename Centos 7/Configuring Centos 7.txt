@@ -1,0 +1,219 @@
+
+#### Use `ip addr` instead of `ifconfig`
+#### Use `ss` instead of `netstat`
+
+	$ ip addr | less
+	$ ss -tulpn
+	
+#### Listing services
+
+	$ chkconfig --list | less
+	$ systemctl list-unit-files
+	$ systemctl list-dependencies [target]
+	
+#### Enable, disable, status, start, stop, restart services
+
+	$ systemctl status httpd
+	$ systemctl disable httpd
+	$ systemctl enable nginx
+	$ systemctl start php-fpm
+	$ systemctl restart php-fpm
+	$ systemctl stop php-fpm
+
+#### Disabling ipv6
+
+	$ vi /etc/sysctl.conf
+	[...]
+		# Disable ipv6
+		net.ipv6.conf.all.disable_ipv6 = 1
+		net.ipv6.conf.default.disable_ipv6 = 1
+	[...]
+
+	$ sysctl -p
+
+	$ vi /etc/ssh/sshd_config
+	[...]
+		AddressFamily inet
+	[...]
+
+	$ systemctl restart sshd
+
+	vi /etc/hosts
+	[...]
+		#::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+	[...]
+	
+#### Configuring network
+
+	$ vi /etc/sysconfig/network-scripts/ifcfg-eno16777736
+	[...]
+        DEVICE=eno16777736
+        HWADDR=00:0C:29:81:ED:57
+        TYPE=Ethernet
+        UUID=c5e0d5c8-ff1b-4581-b227-efeac90d0143
+        ONBOOT=yes
+        NM_CONTROLLED=yes
+        BOOTPROTO=dhcp
+        PEERDNS=yes
+        METRIC=1
+	[...]
+	
+	$ vi /etc/sysconfig/network-scripts/ifcfg-eno16777737
+	[...]
+        DEVICE=eno16777737
+        TYPE=Ethernet
+        UUID=ca36359c-35a4-4e38-b51e-ed598690d2a5
+        ONBOOT=yes
+        NM_CONTROLLED=no
+        BOOTPROTO=static
+        HWADDR=00:0C:29:81:ED:61
+        IPADDR=172.16.6.50
+        NETMASK=255.255.252.0
+        GATEWAY=172.16.4.1
+        DNS1=172.16.48.5
+        DEFROUTE=yes
+        IPV4_FAILURE_FATAL=yes
+        IPV6INIT=no
+        NAME=eno16777737
+        PEERDNS=no
+        METRIC=2
+	[...]
+	
+	$ systemctl restart network
+	$ ip addr | less
+
+#### SSH takes too long to prompt for password
+
+	$ vi /etc/ssh/sshd_config
+	[...]
+        # GSSAPI options
+        GSSAPIAuthentication no
+        #GSSAPIAuthentication yes
+
+        UseDNS no
+        #UseDNS yes
+	[...]
+	
+	$ systemctl restart sshd
+
+#### Configuring hostname
+
+	$ vi /etc/hosts
+	[...]
+        127.0.0.1   cdn1.example.com cdn1 localhost localhost.localdomain localhost4 localhost4.localdomain4
+        ::1         cdn1.example.com cdn1 localhost localhost.localdomain localhost6 localhost6.localdomain6
+	[...]
+	
+	$ hostnamectl set-hostname cdn1.example.com --static
+	$ systemctl restart systemd-hostnamed
+	
+	* Check hostname, both `$ hostname` & `$ hostname -f` should output the same hostname
+
+#### Disabling SELinux
+
+	* Although it's a very good MAC system, for any web related task (ftp, web server etc), it's a PITA to configure, just disable it and save yourself lots of headache.
+
+	$ vi /etc/sysconfig/selinux
+	[...]
+            # This file controls the state of SELinux on the system.
+            # SELINUX= can take one of these three values:
+            #     enforcing - SELinux security policy is enforced.
+            #     permissive - SELinux prints warnings instead of enforcing.
+            #     disabled - No SELinux policy is loaded.
+            SELINUX=disabled
+            # SELINUXTYPE= can take one of these two values:
+            #     targeted - Targeted processes are protected,
+            #     mls - Multi Level Security protection.
+            SELINUXTYPE=targeted
+	[...]
+	
+	$ reboot
+
+#### Configuring timezone
+
+	$ ln -sf /usr/share/zoneinfo/Asia/Tehran /etc/localtime
+
+#### Configuring date
+
+	* Check: `$ date` & `$ hwclock`
+
+	$ date MMDDhhmm
+	$ hwclock -w
+
+#### Configuring Yum
+
+	* Install yum-priorities and other useful plugins
+
+    $ yum -y install yum-plugin-priorities yum-plugin-rpm-warm-cache yum-plugin-local deltarpm yum-plugin-fastestmirror
+
+    $ vi /etc/yum.repos.d/CentOS-Base.repo
+	[...]
+		[base]
+		priority=1
+		name=CentOS-$releasever - Base
+		...
+
+		#released updates 
+		[updates]
+		priority=1
+		name=CentOS-$releasever - Updates
+		...
+
+		#additional packages that may be useful
+		[extras]
+		priority=1
+		name=CentOS-$releasever - Extras
+	[...]
+
+#### Disabling `root` account
+
+* Login as root:
+
+    $ useradd -G wheel sadeghi85
+
+    $ passwd sadeghi85
+
+    $ visudo
+	[...]
+            Defaults:%wheel    !requiretty
+            %wheel ALL=(ALL) NOPASSWD: ALL
+	[...]
+	
+    $ usermod --lock root
+
+    Now logout and login as the newly created admin account
+
+
+* Description
+
+    The newly created admin account is effectively like the root; It can sudo, doesn't need to enter password for sudo and doesn't require tty to login(so you can login as root with WinSCP even though the root account is disabled; Under WinSCP advanced option SCP/Shell, choose `sudo su -` as shell), therefore all security concerns about root applies to this account too, except now the attacker needs to also guess the username instead of just brute-forcing root's password.
+
+#### Enable `root` account
+
+* Login with an account with sudo permission
+
+    $ sudo su -
+
+    $ passwd
+
+#### Updating the OS
+
+	$ yum update
+
+#### Install some handy repos
+
+	* EPEL repo
+
+		$ rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+
+	* RPMForge repo
+
+		$ rpm -ivh http://repoforge.mirror.digitalpacific.com.au/redhat/el7/en/x86_64/rpmforge/RPMS/rpmforge-release-0.5.3-1.el7.rf.x86_64.rpm
+
+	* IUS repo
+	
+		$ rpm -ivh https://centos7.iuscommunity.org/ius-release.rpm
+		
+#### Install some useful packages
+
+	$ yum -y install htop nmap iftop iotop bind-utils net-tools
