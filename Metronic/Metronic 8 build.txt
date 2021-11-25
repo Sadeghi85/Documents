@@ -1,0 +1,29 @@
+
+- Download latest Node.js LTS version. --> https://nodejs.org/en/download/
+- Install the latest npm. --> npm install --global npm@latest
+- npm install --global yarn
+- npm install --global gulp-cli
+
+html:
+
+(https://preview.keenthemes.com/metronic8/demo7/documentation/getting-started/build/gulp.html)
+
+1- cd theme/tools/
+2- yarn
+3- gulp --demo1
+4- gulp localhost
+
+rtl:
+(https://preview.keenthemes.com/metronic8/demo1/documentation/getting-started/rtl.html)
+dark-mode:
+(https://preview.keenthemes.com/metronic8/demo7/documentation/getting-started/dark-mode.html)
+
+vue:
+
+
+1- cd \Metronic v8.0.24\vue\demo1
+2- npm install
+3- npm run rtl
+4- Open the Vue main file App.vue file from [metronic]/[vue]/[demo]/src/App.vue. Import RTL CSS style.rtl.css file. Change @import "assets/sass/style"; to RTL CSS @import "assets/css/style.rtl.css"
+5- Open the Vue index.html file from [metronic]/[vue]/[demo]/public/index.html. Add the RTL attributes to the body tag
+6- npm run serve (npm run build)
