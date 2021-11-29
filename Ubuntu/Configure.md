@@ -1,4 +1,5 @@
 
+
 # Configuring Ubuntu
 
 - find interface name
@@ -114,3 +115,63 @@ $ dpkg -r zip
 ```
 > configuration of the _Advanced Packaging Tool_ (APT) system repositories is stored in the `/etc/apt/sources.list` file and the `/etc/apt/sources.list.d` directory
 ---
+- disable `root` account
+```
+$ useradd -m -s $(which bash) -G sudo poweruser
+$ passwd poweruser
+```
+```
+$ visudo
+
+[...]
+	#%sudo  ALL=(ALL:ALL) ALL
+	%sudo ALL=(ALL) NOPASSWD: ALL
+
+	Defaults:%sudo    !requiretty
+[...]
+```
+```
+$ usermod --lock root
+```
+> now logout and login as the newly created admin account
+
+> description
+>
+> the newly created admin account is effectively like the root; It can sudo, doesn't need to enter password for sudo and doesn't require tty to login(so you can login as root with WinSCP even though the root account is disabled; under WinSCP advanced option SCP/Shell, choose `sudo su -` as shell), therefore all security concerns about root applies to this account too, except now the attacker needs to also guess the username instead of just brute-forcing root's password.
+---
+- enable `root` account
+> login with an account with sudo permission
+```
+$ sudo su -
+$ passwd
+```
+```
+$ vi /etc/ssh/sshd_config
+
+[...]
+	PermitRootLogin yes
+[...]
+```
+```
+$ systemctl restart sshd
+```
+---
+- disable ipv6
+```
+$ vi /etc/default/grub
+
+[...]
+	GRUB_CMDLINE_LINUX_DEFAULT="ipv6.disable=1"
+[...]
+```
+```
+$ update-grub
+```
+```
+$ reboot
+```
+---
+- useful packages
+```
+$ apt install nmap
+```
