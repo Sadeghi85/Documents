@@ -1,3 +1,4 @@
+
 # Configuring Ubuntu
 
 - find interface name
@@ -72,4 +73,44 @@ $ hostnamectl set-hostname openproject --static
 $ systemctl restart systemd-hostnamed
 ```
 > both `$ hostname` & `$ hostname -f` should output the same hostname
+---
+- set timezone
+```
+$ ln -sf /usr/share/zoneinfo/Asia/Tehran /etc/localtime
+```
+---
+- set date
+> check: `$ date` & `$ hwclock`
+```
+$ date MMDDhhmm
+$ hwclock -w
+```
+---
+- package management
+```
+$ apt install nmap
+$ apt remove nmap
+$ apt update && apt dist-upgrade
+```
+> to list all packages in the system’s package database
+```
+$ dpkg -l | grep apache2
+```
+> to list the files installed by a package, in this case the ufw package, enter:
+```
+$ dpkg -L ufw
+```
+> if you are not sure which package installed a file, `dpkg -S` may be able to tell you
+```
+$ dpkg -S /etc/host.conf
+```
+> you can install a local `.deb` file by entering:
+```
+$ dpkg -i zip_3.0-4_amd64.deb
+```
+> uninstalling a package can be accomplished by:
+```
+$ dpkg -r zip
+```
+> configuration of the _Advanced Packaging Tool_ (APT) system repositories is stored in the `/etc/apt/sources.list` file and the `/etc/apt/sources.list.d` directory
 ---
