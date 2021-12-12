@@ -6,6 +6,10 @@
 ```
 $ ip address show
 ```
+- routes
+```
+$ ip route
+```
 ---
 - set dynamic ip
 ```
@@ -91,7 +95,14 @@ $ hwclock -w
 ```
 $ apt install nmap
 $ apt remove nmap
+```
+> to update packages
+```
 $ apt update && apt dist-upgrade
+```
+> to search packages
+```
+$ apt-cache search keyword
 ```
 > to list all packages in the system’s package database
 ```
@@ -173,5 +184,5 @@ $ reboot
 ---
 - useful packages
 ```
-$ apt install nmap
+$ apt install htop nmap iftop iotop net-tools bind9-dnsutils
 ```
