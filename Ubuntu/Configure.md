@@ -1,5 +1,6 @@
 
 
+
 # Configuring Ubuntu
 
 - find interface name
@@ -103,6 +104,16 @@ $ apt update && apt dist-upgrade
 > to search packages
 ```
 $ apt-cache search keyword
+```
+> to check version of packages
+```
+$ apt list -a keyword
+or
+$ apt-cache policy keyword
+```
+> to install specific version of package
+```
+$ apt install redis=6:6.2.6-3rl1~focal1
 ```
 > to list all packages in the system’s package database
 ```
