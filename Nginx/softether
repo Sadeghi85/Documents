@@ -1,0 +1,15 @@
+## Installing SoftEther ob ubuntu 22.04.1 *LTS*
+
+##### Step 1 – Check IP Forwarding
+````
+cat /proc/sys/net/ipv4/ip_forward
+````
+if it is `1` it's ok. else edit `/etc/sysctl.conf`
+-   Uncomment the line: `net.ipv4.ip_forward=1`. Save and close the file.
+- `sysctl -p`
+- Find the local gateway of your system by running the command: `sudo netstat -rn` . Please note down the gateway IPv4 address, we will need it in step 2. In the following example, the gateway is: `192.168.0.1`
+
+#### Step 2 – install it
+
+`mkdir ~/softether`
+`tar -xzf softether-vpnclient-<version_info>.tar.gz -C ~/softether`
